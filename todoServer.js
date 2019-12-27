@@ -15,6 +15,7 @@ function todoServer() {
   const httpOk = 200;
   const httpCreated = 201;
   const httpNotFound = 404;
+  const httpBadRequest = 400;
 
   // Handlers return an array in the form of [status, data, headers]
 
@@ -60,19 +61,25 @@ function todoServer() {
   }
 
   function addTodo(req) {
-    const newTodo = {...JSON.parse(req.data)};
+    const newTodo = {...req.body};
+    if (!newTodo.content) {
+      return [httpBadRequest, 'missing TODO content'];
+    }
     newTodo.id = String(nextId++);
     todos.push(newTodo);
     return [httpCreated, newTodo];
   }
 
   function updateTodo(req) {
-    const id = req.query.id;
+    const id = req.params.id;
     if (!id) return [httpNotFound, `todo ${id} not found`];
 
     const index = todos.findIndex(e => e.id === id);
     if (index === -1) return [httpNotFound];
-    const updatedTodo = JSON.parse(req.data);
+    const updatedTodo = req.body
+    if (!updatedTodo.content) {
+      return [httpBadRequest, 'missing TODO content'];
+    }
     todos.splice(index, 1, updatedTodo);
     return [httpOk, updatedTodo];
   }

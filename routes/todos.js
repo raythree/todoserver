@@ -15,12 +15,7 @@ function delay(method, req) {
   });
 } 
 
-router.get('/', function(req, res) {
-	delay(methods.get, req)
-  .then((result) => sendResult(res, result));
-});
-
-router.get('/:id', function(req, res) {
+router.get('/:id?', function(req, res) {
 	delay(methods.get, req)
   .then((result) => sendResult(res, result));
 });
